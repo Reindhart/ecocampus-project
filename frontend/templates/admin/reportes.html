@@ -1,7 +1,16 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Gestión de Reportes</h2>
+    <div class="row mt-4">
+        <div class="col-sm-3">
+            <h2 class="mb-4">Gestión de Reportes</h2>
+        </div>
+        <div class="col-sm-2">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary w-100">
+            <i class="fab fa-elementor"></i> Dashboard
+            </a>
+        </div>
+    </div>
     <table class="table table-striped table-hover">
         <thead>
             <tr>

@@ -4,14 +4,14 @@
     "descripcion": "Facultad de Ingeniería",
     "lat": 20.6552,
     "lng": -103.3251,
-    "tipo": "construccion"
+    "tipo": "default"
   },
   {
     "nombre": "Laboratorios Centrales",
     "descripcion": "Zona de laboratorios de química y física",
     "lat": 20.654,
     "lng": -103.3258,
-    "tipo": "construccion"
+    "tipo": "default"
   },
   {
     "nombre": "Jardín Central",
@@ -25,7 +25,7 @@
     "descripcion": "juegos de cartitas",
     "lat": 20.657735,
     "lng": -103.327022,
-    "tipo": "construccion"
+    "tipo": "default"
   },
   {
     "nombre": "Globo",
@@ -33,5 +33,47 @@
     "lat": 20.656008,
     "lng": -103.325122,
     "tipo": "restaurante"
+  },
+  {
+    "nombre": "Basura",
+    "descripcion": "yeet",
+    "lat": 20.656318,
+    "lng": -103.325437,
+    "tipo": "bote"
+  },
+  {
+    "nombre": "Construcción",
+    "descripcion": "asd",
+    "lat": 20.65678,
+    "lng": -103.326494,
+    "tipo": "construccion"
+  },
+  {
+    "nombre": "Bebederos",
+    "descripcion": "Bebederos y microondas",
+    "lat": 20.656305,
+    "lng": -103.325775,
+    "tipo": "bebedero"
+  },
+  {
+    "nombre": "Tiendas",
+    "descripcion": "de la esquina",
+    "lat": 20.658542,
+    "lng": -103.326529,
+    "tipo": "tienda"
+  },
+  {
+    "nombre": "Bebederos",
+    "descripcion": "asd",
+    "lat": 20.657611,
+    "lng": -103.324804,
+    "tipo": "bebedero"
+  },
+  {
+    "nombre": "Basura",
+    "descripcion": "asd",
+    "lat": 20.656541,
+    "lng": -103.325963,
+    "tipo": "bote"
   }
 ]

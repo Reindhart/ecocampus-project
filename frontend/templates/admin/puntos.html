@@ -3,10 +3,19 @@
 {% block title %}Gestión de Puntos | EcoCampus Admin{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Puntos de Interés</h2>
+<div class="row mt-4">
+  <div class="col-sm-3">
+    <h2 class="mb-4">Puntos de Interés</h2>
+  </div>
+  <div class="col-sm-2">
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary w-100">
+      <i class="fab fa-elementor"></i> Dashboard
+      </a>
+  </div>
+</div>
 
 <div class="row g-4">
-  <div class="col-md-6">
+  <div class="col-md-3">
     <form method="POST" class="card p-3 shadow-sm border-success">
       <h5 class="text-success">Agregar nuevo punto</h5>
       <div class="mb-2">
@@ -40,14 +49,26 @@
       <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Agregar Punto</button>
     </form>
   </div>
-
-  <div class="col-md-6">
+  <div class="col-md-9">
     <div class="card shadow-sm">
       <div class="card-body p-0">
-        <div id="map" style="height: 400px;" class="rounded-bottom"></div>
+        <div id="map" style="min-height: 56.5dvh;" class="rounded-bottom"></div>
       </div>
     </div>
   </div>
+</div>
+
+<div class="p-3">
+  <h6 class="mb-2">Simbología:</h6>
+  <ul class="list-unstyled d-flex flex-wrap gap-3">
+    <li><span class="legend-box marker-bote"></span> Bote de basura</li>
+    <li><span class="legend-box marker-verde"></span> Área verde</li>
+    <li><span class="legend-box marker-bebedero"></span> Bebedero</li>
+    <li><span class="legend-box marker-restaurante"></span> Restaurante</li>
+    <li><span class="legend-box marker-tienda"></span> Tienda</li>
+    <li><span class="legend-box marker-default"></span> Zona de interés</li>
+    <li><span class="legend-box marker-construccion"></span> Zona en construcción</li>
+  </ul>
 </div>
 {% endblock %}
 

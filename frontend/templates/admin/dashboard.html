@@ -5,21 +5,50 @@
 {% block content %}
 <h2 class="mb-4">Panel de Administración</h2>
 
-<div class="row g-3">
-  <div class="col-md-4">
-    <a href="{{ url_for('admin_puntos') }}" class="btn btn-outline-success w-100">
-      <i class="fas fa-map-pin me-1"></i> Puntos de Interés
-    </a>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+      <a href="{{ url_for('admin_puntos') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-success border-success">
+          <div class="card-body text-center">
+            <i class="fas fa-map-pin fa-3x mb-3"></i>
+            <h5 class="card-title">Puntos de Interés</h5>
+            <p class="card-text">Crear puntos de interés del campus.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('admin_reportes') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-warning border-warning">
+          <div class="card-body text-center">
+            <i class="fas fa-clipboard-check fa-3x mb-3"></i>
+            <h5 class="card-title">Reportes</h5>
+            <p class="card-text">Ver y Actualizar Reportes.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('admin_actividades') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-info border-info">
+          <div class="card-body text-center">
+            <i class="fas fa-leaf fa-3x mb-3"></i>
+            <h5 class="card-title">Actividades</h5>
+            <p class="card-text">Crear, archivar y editar actividades.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('menu') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-dark border-dark">
+          <div class="card-body text-center">
+            <i class="fas fa-user fa-3x mb-3"></i>
+            <h5 class="card-title">Menu Principal</h5>
+            <p class="card-text">Funciones de usuario.</p>
+          </div>
+        </div>
+      </a>
+    </div>
   </div>
-  <div class="col-md-4">
-    <a href="{{ url_for('admin_reportes') }}" class="btn btn-outline-primary w-100">
-      <i class="fas fa-clipboard-check me-1"></i> Ver y Actualizar Reportes
-    </a>
-  </div>
-  <div class="col-md-4">
-    <a href="{{ url_for('admin_actividades') }}" class="btn btn-outline-warning w-100">
-      <i class="fas fa-leaf me-1"></i> Crear / Editar Actividades
-    </a>
-  </div>
-</div>
 {% endblock %}

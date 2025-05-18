@@ -3,15 +3,27 @@
 {% block title %}Mapa Interactivo | EcoCampus{% endblock %}
 
 {% block content %}
+<div class="px-3">
+  <h6 class="mb-2">Simbología:</h6>
+  <ul class="list-unstyled d-flex flex-wrap gap-3">
+    <li><span class="legend-box marker-bote"></span> Bote de basura</li>
+    <li><span class="legend-box marker-verde"></span> Área verde</li>
+    <li><span class="legend-box marker-bebedero"></span> Bebedero</li>
+    <li><span class="legend-box marker-restaurante"></span> Restaurante</li>
+    <li><span class="legend-box marker-tienda"></span> Tienda</li>
+    <li><span class="legend-box marker-default"></span> Zona de interés</li>
+    <li><span class="legend-box marker-construccion"></span> Zona en construcción</li>
+  </ul>
+</div>
 <div class="card-header bg-success text-white">
   <i class="fas fa-map-marked-alt me-1" style="margin-left: 1%;"></i> Mapa de CUCEI
 </div>
-
 <div class="card shadow-sm border-success mb-4">
   <div class="card-body p-0">
-    <div id="map" class="rounded-bottom" style="min-height: 80vh;"></div>
+    <div id="map" class="rounded-bottom" style="min-height: 65vh;"></div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}

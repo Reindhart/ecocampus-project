@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Actividades Disponibles | EcoCampus{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Actividades Disponibles</h2>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
+  {% for a in actividades %}
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ a.titulo }}</h5>
+        <p class="card-text">{{ a.descripcion }}</p>
+        <p class="text-muted">Área: {{ a.area }}</p>
+        <form method="POST">
+          <input type="hidden" name="actividad_id" value="{{ a.id }}">
+          {% if a.id in inscritas %}
+            <button class="btn btn-secondary w-100" disabled>Ya estás inscrito</button>
+          {% else %}
+            <button class="btn btn-success w-100" type="submit"><i class="fas fa-plus"></i> Inscribirme</button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

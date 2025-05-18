@@ -13,7 +13,21 @@
         
         <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
             <div class="container">
-                <a class="navbar-brand" href="/">EcoCampus</a>
+                <a class="navbar-brand" href="{{ url_for('menu') if session.get('usuario_id') else url_for('inicio') }}">
+                EcoCampus
+                </a>
+
+                {% if session.get('usuario_id') %}
+                <div class="dropdown ms-auto">
+                <button class="btn btn-success dropdown-toggle" type="button" id="usuarioDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle me-1"></i> {{ session['usuario_nombre'] }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('perfil') }}"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                </ul>
+                </div>
+                {% endif %}
             </div>
         </nav>
 
@@ -35,8 +49,45 @@
             {% block content %}{% endblock %}
         </div>
 
+        
+        {% if session.get('usuario_id') and request.path in [url_for('perfil'), url_for('reportes'), url_for('mapa'), url_for('perfil_reportes'), url_for('perfil_actividades')] %}
+        <footer class="footer fixed-bottom bg-white border-top shadow-sm">
+            <div class="container-fluid">
+                <div class="row text-center">
+                <div class="col">
+                    <a href="{{ url_for('perfil') }}" class="nav-icon {% if request.path in [url_for('perfil'), url_for('perfil_reportes'), url_for('perfil_actividades')] %}active{% endif %}">
+                    <i class="fas fa-user fa-lg"></i>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('reportes') }}" class="nav-icon {% if request.path == url_for('reportes') %}active{% endif %}">
+                    <i class="fas fa-clipboard-list fa-lg"></i>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('menu') }}" class="nav-icon">
+                    <i class="fas fa-home fa-lg"></i>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('mapa') }}" class="nav-icon {% if request.path == url_for('mapa') %}active{% endif %}">
+                    <i class="fas fa-map-marked-alt fa-lg"></i>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ url_for('notificaciones') }}" class="nav-icon {% if request.path == url_for('notificaciones') %}active{% endif %}">
+                    <i class="fas fa-bell fa-lg"></i>
+                    </a>
+                </div>
+                </div>
+            </div>
+        </footer>
+        {% endif %}
+
+
         <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/all.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        {% block scripts %}{% endblock %}
     </body>
 </html>

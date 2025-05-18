@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block title %}Notificaciones | EcoCampus{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Notificaciones</h2>
+
+{% if notificaciones %}
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-success text-center">
+        <tr>
+          <th style="width: 5%"><i class="fas fa-hashtag"></i></th>
+          <th>Mensaje</th>
+          <th style="width: 15%">Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in notificaciones %}
+        <tr>
+          <td class="text-center">{{ loop.index }}</td>
+          <td><i class="fas fa-bell me-2 text-{{ n.tipo }}"></i> {{ n.mensaje }}</td>
+          <td class="text-center">
+            <span class="badge bg-{{ n.tipo }}">{{ n.tipo.capitalize() }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-secondary text-center">
+    <i class="fas fa-inbox"></i> No tienes notificaciones por ahora.
+  </div>
+{% endif %}
+{% endblock %}

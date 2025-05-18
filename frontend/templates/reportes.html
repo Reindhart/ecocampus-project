@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}Nuevo Reporte | EcoCampus{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Crear nuevo reporte</h2>
+
+<form method="POST" action="{{ url_for('reportes') }}">
+  <div class="mb-3">
+    <label for="area" class="form-label">Área Afectada</label>
+    <input type="text" name="area" id="area" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label for="tipo" class="form-label">Tipo de Reporte</label>
+    <select name="tipo" id="tipo" class="form-select" required>
+      <option value="">Selecciona una opción</option>
+      <option value="infraestructura">Infraestructura</option>
+      <option value="basura">Basura</option>
+      <option value="fuga">Fuga</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="descripcion" class="form-label">Descripción</label>
+    <textarea name="descripcion" id="descripcion" rows="3" class="form-control" required></textarea>
+  </div>
+  <div class="mb-3">
+    <label for="comentario" class="form-label">Comentario adicional (opcional)</label>
+    <textarea name="comentario" id="comentario" rows="2" class="form-control"></textarea>
+  </div>
+  <div class="mb-3">
+    <label for="evidencia" class="form-label">Evidencia (imagen)</label>
+    <input type="file" class="form-control" name="evidencia" id="evidencia" accept="image/*">
+  </div>
+
+  <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Enviar Reporte</button>
+</form>
+{% endblock %}

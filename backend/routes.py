@@ -1,6 +1,10 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from .models import db, Usuario
+from datetime import datetime, timedelta
+from .models import db, Usuario, Reporte, Actividad, Inscripcion
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import os
+
 
 def init_routes(app):
     @app.route('/')
@@ -54,25 +58,14 @@ def init_routes(app):
         session.clear()
         flash('Sesión cerrada correctamente.')
         return redirect(url_for('inicio'))
-
-    @app.route('/reportes')
-    def reportes():
+    
+    @app.route('/menu')
+    def menu():
         if 'usuario_id' not in session:
+            flash('Debes iniciar sesión para acceder al menú.')
             return redirect(url_for('login'))
-        return render_template('reportes.html', usuario=session['usuario_nombre'])
-
-    @app.route('/actividades')
-    def actividades():
-        return render_template('actividades.html')
-
-    @app.route('/mapa')
-    def mapa():
-        return render_template('mapa.html')
-
-    @app.route('/notificaciones')
-    def notificaciones():
-        return render_template('notificaciones.html')
-
+        return render_template('menu.html')
+    
     @app.route('/perfil')
     def perfil():
         if 'usuario_id' not in session:
@@ -87,11 +80,109 @@ def init_routes(app):
 
         return render_template('perfil.html', usuario=usuario)
     
-    @app.route('/menu')
-    def menu():
+    @app.route('/perfil/reportes')
+    def perfil_reportes():
         if 'usuario_id' not in session:
-            flash('Debes iniciar sesión para acceder al menú.')
             return redirect(url_for('login'))
-        return render_template('menu.html')
+        reportes = Reporte.query.filter_by(usuario_id=session['usuario_id']).all()
+        return render_template('perfil_reportes.html', reportes=reportes)
+
+    @app.route('/perfil/actividades')
+    def perfil_actividades():
+        if 'usuario_id' not in session:
+            flash('Debes iniciar sesión.')
+            return redirect(url_for('login'))
+
+        inscripciones = Inscripcion.query.filter_by(usuario_id=session['usuario_id']).all()
+        return render_template('perfil_actividades.html', inscripciones=inscripciones)
 
 
+    @app.route('/reportes', methods=['GET', 'POST'])
+    def reportes():
+        if 'usuario_id' not in session:
+            return redirect(url_for('login'))
+
+        if request.method == 'POST':
+            area = request.form['area']
+            tipo = request.form['tipo']
+            descripcion = request.form['descripcion']
+            comentario = request.form.get('comentario', '')
+            archivo = request.files.get('evidencia')
+
+            evidencia = ''
+            if archivo and archivo.filename != '' and archivo_permitido(archivo.filename):
+                nombre_archivo = secure_filename(archivo.filename)
+                evidencia = os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo)
+                ruta_absoluta = os.path.join(app.root_path, evidencia)
+                archivo.save(ruta_absoluta)
+
+            nuevo = Reporte(
+                area=area,
+                tipo=tipo,
+                descripcion=descripcion,
+                comentario=comentario,
+                evidencia=evidencia.replace('frontend/', ''),  # Para usar con url_for
+                fecha=datetime.now().strftime('%Y-%m-%d'),
+                estado='pendiente',
+                usuario_id=session['usuario_id']
+            )
+            db.session.add(nuevo)
+            db.session.commit()
+            flash(f'Reporte con el folio #{nuevo.id} fue enviado con éxito.')
+            return redirect(url_for('menu'))
+
+        return render_template('reportes.html')
+    
+    def archivo_permitido(nombre):
+        return '.' in nombre and nombre.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
+
+    @app.route('/actividades', methods=['GET', 'POST'])
+    def actividades():
+        if 'usuario_id' not in session:
+            return redirect(url_for('login'))
+
+        if request.method == 'POST':
+            actividad_id = request.form.get('actividad_id')
+            ya_inscrito = Inscripcion.query.filter_by(
+                usuario_id=session['usuario_id'],
+                actividad_id=actividad_id
+            ).first()
+
+            if not ya_inscrito:
+                inscripcion = Inscripcion(
+                    usuario_id=session['usuario_id'],
+                    actividad_id=actividad_id
+                )
+                db.session.add(inscripcion)
+                db.session.commit()
+                flash('Te has inscrito correctamente.')
+            else:
+                flash('Ya estás inscrito en esta actividad.')
+
+            return redirect(url_for('actividades'))
+
+        actividades = Actividad.query.all()
+        inscritas = [i.actividad_id for i in Inscripcion.query.filter_by(usuario_id=session['usuario_id']).all()]
+        return render_template('actividades.html', actividades=actividades, inscritas=inscritas)
+
+
+    @app.route('/mapa')
+    def mapa():
+        return render_template('mapa.html')
+    
+    @app.route('/notificaciones')
+    def notificaciones():
+        if 'usuario_id' not in session:
+            return redirect(url_for('login'))
+
+        # Ejemplo estático
+        notificaciones = [
+            {"mensaje": "Tu reporte #12 ha cambiado a estado 'En revisión'", "tipo": "info"},
+            {"mensaje": "Nueva actividad disponible: Reforestación", "tipo": "success"},
+            {"mensaje": "Tu actividad 'Reciclaje electrónico' inicia mañana", "tipo": "warning"}
+        ]
+
+        # notificaciones = Notificacion.query.filter_by(usuario_id=session['usuario_id']).all()
+
+        return render_template('notificaciones.html', notificaciones=notificaciones)

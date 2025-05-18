@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mis Reportes | EcoCampus{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Mis Reportes</h2>
+
+{% if reportes %}
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-success text-center">
+        <tr>
+          <th>Folio</th>
+          <th>Fecha</th>
+          <th>Área</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+          <th>Descripción</th>
+          <th>Evidencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reportes %}
+        <tr>
+          <td class="text-center">#{{ r.id }}</td>
+          <td class="text-center">{{ r.fecha }}</td>
+          <td>{{ r.area }}</td>
+          <td>{{ r.tipo }}</td>
+          <td class="text-center">
+            {% if r.estado == 'pendiente' %}
+              <span class="badge bg-warning text-dark">Pendiente</span>
+            {% elif r.estado == 'revision' %}
+              <span class="badge bg-info text-dark">En Revisión</span>
+            {% elif r.estado == 'concluido' %}
+              <span class="badge bg-success">Concluido</span>
+            {% endif %}
+          </td>
+          <td>{{ r.descripcion }}</td>
+          <td class="text-center">
+            {% if r.evidencia %}
+              <a href="{{ url_for('static', filename=r.evidencia) }}" target="_blank">
+                <i class="fas fa-image"></i> Ver
+              </a>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-secondary text-center">
+    No has enviado ningún reporte todavía.
+  </div>
+{% endif %}
+{% endblock %}

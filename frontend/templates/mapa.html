@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mapa Interactivo | EcoCampus{% endblock %}
+
+{% block content %}
+<div class="card-header bg-success text-white">
+  <i class="fas fa-map-marked-alt me-1" style="margin-left: 1%;"></i> Mapa de CUCEI
+</div>
+
+<div class="card shadow-sm border-success mb-4">
+  <div class="card-body p-0">
+    <div id="map" class="rounded-bottom" style="min-height: 80vh;"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}">
+<script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+
+<script>
+  const mapa = L.map('map').setView([20.6546, -103.3259], 17); // CUCEI
+
+  // Tile layer OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'EcoCampus'
+  }).addTo(mapa);
+
+  // Puntos de interés
+  const puntos = [
+    { nombre: "Edificio A", coords: [20.6552, -103.3251] },
+    { nombre: "Laboratorios", coords: [20.6540, -103.3258] },
+    { nombre: "Jardín Central", coords: [20.6547, -103.3267] }
+  ];
+
+  fetch('{{ url_for("static", filename="js/puntos.json") }}')
+    .then(res => res.json())
+    .then(puntos => {
+      puntos.forEach(p => {
+        L.marker([p.lat, p.lng]).addTo(mapa)
+          .bindPopup(`<strong>${p.nombre}</strong><br>${p.descripcion}`);
+      });
+    });
+</script>
+{% endblock %}

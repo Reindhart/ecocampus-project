@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mis Actividades | EcoCampus{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Mis Actividades Inscritas</h2>
+
+{% if inscripciones %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for ins in inscripciones %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-success">{{ ins.actividad.titulo }}</h5>
+          <p class="card-text">{{ ins.actividad.descripcion }}</p>
+          <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ ins.actividad.area }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-secondary text-center">
+    No estás inscrito en ninguna actividad.
+  </div>
+{% endif %}
+{% endblock %}

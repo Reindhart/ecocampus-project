@@ -1,0 +1,20 @@
+[
+  {
+    "nombre": "Edificio A",
+    "descripcion": "Facultad de Ingeniería",
+    "lat": 20.6552,
+    "lng": -103.3251
+  },
+  {
+    "nombre": "Laboratorios Centrales",
+    "descripcion": "Zona de laboratorios de química y física",
+    "lat": 20.6540,
+    "lng": -103.3258
+  },
+  {
+    "nombre": "Jardín Central",
+    "descripcion": "Área verde central",
+    "lat": 20.6547,
+    "lng": -103.3267
+  }
+]

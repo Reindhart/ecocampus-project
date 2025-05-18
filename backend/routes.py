@@ -6,11 +6,14 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 import os, json
 
-
-
 def init_routes(app):
     @app.route('/')
     def inicio():
+        
+        if session.get('usuario_id'):        
+            usuario = Usuario.query.filter_by(id=session['usuario_id']).first()
+            if usuario:
+                return redirect(url_for('menu'))
         return render_template('inicio.html')
 
     @app.route('/signup', methods=['GET', 'POST'])
@@ -132,6 +135,7 @@ def init_routes(app):
             db.session.add(nuevo)
             db.session.commit()
             flash(f'Reporte con el folio #{nuevo.id} fue enviado con éxito.')
+            crear_notificacion("Tu reporte ha sido creado y está pendiente.", 'info', usuario_id=session['usuario_id'])
             return redirect(url_for('menu'))
 
         return render_template('reportes.html')
@@ -144,8 +148,6 @@ def init_routes(app):
     def actividades():
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
-
-        # Archivar actividades pasadas antes de cargar la lista
         archivar_actividades_pasadas()
 
         if request.method == 'POST':
@@ -162,6 +164,9 @@ def init_routes(app):
                 )
                 db.session.add(inscripcion)
                 db.session.commit()
+                
+                actividad = Actividad.query.get(actividad_id)
+                crear_notificacion(f"Te has inscrito en la actividad: {actividad.titulo}", 'success', usuario_id=session['usuario_id'])
                 flash('Te has inscrito correctamente.')
             else:
                 flash('Ya estás inscrito en esta actividad.')
@@ -185,6 +190,15 @@ def init_routes(app):
         notificaciones = Notificacion.query.filter_by(usuario_id=session['usuario_id']).all()
 
         return render_template('notificaciones.html', notificaciones=notificaciones)
+    
+    def crear_notificacion(mensaje, tipo='info', usuario_id=None):
+        noti = Notificacion(
+            mensaje=mensaje,
+            tipo=tipo,
+            usuario_id=usuario_id
+        )
+        db.session.add(noti)
+        db.session.commit()
     
     
 # ------------------------------------------------------------------------------------------------------------ #
@@ -233,6 +247,7 @@ def init_routes(app):
             with open(ruta_json, 'w', encoding='utf-8') as f:
                 json.dump(puntos, f, ensure_ascii=False, indent=2)
 
+            crear_notificacion(f"Se ha agregado un nuevo punto de interés: {nombre}", 'info')
             flash('Punto agregado correctamente.')
             return redirect(url_for('admin_puntos'))
 
@@ -256,7 +271,7 @@ def init_routes(app):
         if comentario:
             reporte.comentario = comentario
         db.session.commit()
-
+        crear_notificacion(f"Tu reporte fue actualizado a estado: {nuevo_estado}.", 'success', usuario_id=reporte.usuario_id)
         flash('Reporte actualizado correctamente.')
         return redirect(url_for('admin_reportes'))
 
@@ -289,6 +304,7 @@ def init_routes(app):
             nueva = Actividad(titulo=titulo, descripcion=descripcion, area=area, fecha_hora_inicio=fecha)
             db.session.add(nueva)
             db.session.commit()
+            crear_notificacion(f"Nueva actividad disponible: {nueva.titulo}", 'info')
             flash('Actividad creada correctamente.')
             return redirect(url_for('admin_actividades'))
 

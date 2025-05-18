@@ -41,4 +41,5 @@ class Notificacion(db.Model):
     mensaje = db.Column(db.String(200), nullable=False)
     tipo = db.Column(db.String(50))  # info, alerta, éxito, etc.
     leida = db.Column(db.Boolean, default=False)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)  # null para globales
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)

@@ -13,10 +13,10 @@
         
         <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('menu') if session.get('usuario_id') else url_for('inicio') }}">
+                <a class="navbar-brand" href="{{ url_for('menu') if session.get('usuario_id') else url_for('inicio') }}" style="align-items: center; justify-content: center; top: 50%;">
+                <img src="{{ url_for('static', filename='img/favicon.ico')}}" alt="EcoCampus" style="height: 26px;">
                 EcoCampus
                 </a>
-
                 {% if session.get('usuario_id') %}
                 <div class="dropdown ms-auto">
                     <button class="btn btn-success dropdown-toggle" type="button" id="usuarioDropdown" data-bs-toggle="dropdown" aria-expanded="false">

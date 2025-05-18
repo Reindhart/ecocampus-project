@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block title %}Registro | EcoCampus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4"><i class="fas fa-user-plus text-success"></i> Crear Cuenta</h3>
+        <form method="POST" action="{{ url_for('signup') }}">
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de Usuario</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo</label>
+            <input type="email" class="form-control" id="correo" name="correo" required>
+          </div>
+          <div class="mb-3">
+            <label for="contrasena" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+          </div>
+          <button type="submit" class="btn btn-outline-success w-100">Registrarse</button>
+        </form>
+        <div class="text-center mt-3">
+          ¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

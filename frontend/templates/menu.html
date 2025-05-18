@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block title %}Menú Principal | EcoCampus{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <h2 class="mb-4">¡Hola {{ session['usuario_nombre'] }}!</h2>
+  <p class="mb-4">Selecciona una opción para comenzar:</p>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+      <a href="{{ url_for('reportes') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-success border-success">
+          <div class="card-body text-center">
+            <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+            <h5 class="card-title">Reportes</h5>
+            <p class="card-text">Crear y consultar reportes del campus.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('actividades') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-primary border-primary">
+          <div class="card-body text-center">
+            <i class="fas fa-leaf fa-3x mb-3"></i>
+            <h5 class="card-title">Actividades</h5>
+            <p class="card-text">Ver e inscribirse a actividades sustentables.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('mapa') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-info border-info">
+          <div class="card-body text-center">
+            <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+            <h5 class="card-title">Mapa</h5>
+            <p class="card-text">Visualiza zonas verdes y puntos de interés.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('notificaciones') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-warning border-warning">
+          <div class="card-body text-center">
+            <i class="fas fa-bell fa-3x mb-3"></i>
+            <h5 class="card-title">Notificaciones</h5>
+            <p class="card-text">Consulta alertas y mensajes recientes.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('perfil') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-secondary border-secondary">
+          <div class="card-body text-center">
+            <i class="fas fa-user fa-3x mb-3"></i>
+            <h5 class="card-title">Mi Perfil</h5>
+            <p class="card-text">Revisa tu información personal.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="{{ url_for('logout') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 text-danger border-danger">
+          <div class="card-body text-center">
+            <i class="fas fa-sign-out-alt fa-3x mb-3"></i>
+            <h5 class="card-title">Cerrar Sesión</h5>
+            <p class="card-text">Salir de tu cuenta actual.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

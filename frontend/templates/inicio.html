@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+  <div class="inicio">
+    <h2>Bienvenido a EcoCampus</h2>
+    <a href="{{ url_for('login') }}">Ingresar</a> | 
+    <a href="{{ url_for('signup') }}">Registrarse</a>
+  </div>
+{% endblock %}

@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -7,6 +8,7 @@ class Usuario(db.Model):
     username = db.Column(db.String(50), nullable=False)
     correo = db.Column(db.String(120), unique=True, nullable=False)
     contrasena = db.Column(db.String(200), nullable=False)
+    es_admin = db.Column(db.Boolean, default=False)
 
 class Reporte(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +26,8 @@ class Actividad(db.Model):
     titulo = db.Column(db.String(100), nullable=False)
     descripcion = db.Column(db.String(200))
     area = db.Column(db.String(100))
+    fecha_hora_inicio = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) 
+    archivada = db.Column(db.Boolean, default=False)
 
 class Inscripcion(db.Model):
     id = db.Column(db.Integer, primary_key=True)

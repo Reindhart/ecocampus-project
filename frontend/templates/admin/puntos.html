@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block title %}Gestión de Puntos | EcoCampus Admin{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Puntos de Interés</h2>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <form method="POST" class="card p-3 shadow-sm border-success">
+      <h5 class="text-success">Agregar nuevo punto</h5>
+      <div class="mb-2">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" name="nombre" id="nombre" class="form-control" required>
+      </div>
+      <div class="mb-2">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea name="descripcion" id="descripcion" class="form-control" required></textarea>
+      </div>
+      <div class="mb-2">
+        <label for="lat" class="form-label">Latitud</label>
+        <input type="number" name="lat" id="lat" class="form-control" step="any" required>
+      </div>
+      <div class="mb-2">
+        <label for="lng" class="form-label">Longitud</label>
+        <input type="number" name="lng" id="lng" class="form-control" step="any" required>
+      </div>
+      <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Agregar Punto</button>
+    </form>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <div id="map" style="height: 400px;" class="rounded-bottom"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}">
+<script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+
+<script>
+  const map = L.map('map').setView([20.6546, -103.3259], 17);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'EcoCampus'
+  }).addTo(map);
+
+  // Cargar puntos existentes
+  fetch("{{ url_for('static', filename='js/puntos.json') }}")
+    .then(res => res.json())
+    .then(puntos => {
+      puntos.forEach(p => {
+        L.marker([p.lat, p.lng]).addTo(map)
+          .bindPopup(`<strong>${p.nombre}</strong><br>${p.descripcion}`);
+      });
+    });
+
+  // 🎯 Marcador temporal para agregar punto nuevo
+  let marcadorTemp = null;
+
+  map.on('click', function (e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+
+    // Rellenar campos del formulario
+    document.getElementById('lat').value = lat;
+    document.getElementById('lng').value = lng;
+
+    // Eliminar marcador anterior si existe
+    if (marcadorTemp) {
+      map.removeLayer(marcadorTemp);
+    }
+
+    // Agregar marcador nuevo
+    marcadorTemp = L.marker([lat, lng], { draggable: true }).addTo(map)
+      .bindPopup('Ubicación seleccionada').openPopup();
+
+    // Actualizar valores si se arrastra el marcador
+    marcadorTemp.on('dragend', function (event) {
+      const pos = event.target.getLatLng();
+      document.getElementById('lat').value = pos.lat.toFixed(6);
+      document.getElementById('lng').value = pos.lng.toFixed(6);
+    });
+  });
+</script>
+{% endblock %}

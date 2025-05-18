@@ -3,7 +3,16 @@
 {% block title %}Mis Reportes | EcoCampus{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Mis Reportes</h2>
+<div class="row mt-4">
+    <div class="col-sm-3">
+  <h2 class="mb-4">Mis Reportes</h2>
+  </div>
+    <div class="col-sm-2">
+        <a href="{{ url_for('reportes') }}" class="btn btn-outline-success w-100">
+        <i class="fas fa-clipboard-list"></i> Crear Reporte
+        </a>
+    </div>
+</div>
 
 {% if reportes %}
   <div class="table-responsive">
@@ -29,9 +38,9 @@
           <td class="text-center">
             {% if r.estado == 'pendiente' %}
               <span class="badge bg-warning text-dark">Pendiente</span>
-            {% elif r.estado == 'revision' %}
-              <span class="badge bg-info text-dark">En Revisión</span>
-            {% elif r.estado == 'concluido' %}
+            {% elif r.estado == 'en proceso' %}
+              <span class="badge bg-info text-dark">En Proceso</span>
+            {% elif r.estado == 'resuelto' %}
               <span class="badge bg-success">Concluido</span>
             {% endif %}
           </td>

@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ accion }} Actividad</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input type="text" class="form-control" name="titulo" required value="{{ actividad.titulo if actividad else '' }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" name="descripcion">{{ actividad.descripcion if actividad else '' }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Área</label>
+            <input type="text" class="form-control" name="area" required value="{{ actividad.area if actividad else '' }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Fecha y hora de inicio</label>
+            <input type="datetime-local" class="form-control" name="fecha_hora_inicio" required
+            value="{{ actividad.fecha_hora_inicio.strftime('%Y-%m-%dT%H:%M') if actividad else '' }}"
+            min="{{ now.strftime('%Y-%m-%dT%H:%M') }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">{{ accion }}</button>
+        <a href="{{ url_for('admin_actividades') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

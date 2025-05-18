@@ -14,6 +14,7 @@
           <h5 class="card-title text-success">{{ ins.actividad.titulo }}</h5>
           <p class="card-text">{{ ins.actividad.descripcion }}</p>
           <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ ins.actividad.area }}</p>
+          <p class="text-muted"><i class="far fa-clock me-1"></i>{{ ins.actividad.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M') }}</p>
         </div>
       </div>
     </div>

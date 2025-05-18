@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestión de Reportes</h2>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Área</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reporte in reportes %}
+            <tr>
+                <td>{{ reporte.area }}</td>
+                <td>{{ reporte.tipo }}</td>
+                <td>{{ reporte.descripcion }}</td>
+                <td>{{ reporte.fecha }}</td>
+                <td><span class="badge {% if reporte.estado == 'pendiente' %} bg-warning {% elif reporte.estado == 'en proceso' %} bg-secondary {% elif reporte.estado == 'resuelto' %} bg-success {% endif %}">{{ reporte.estado }}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{ reporte.id }}">
+                        Editar
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modal{{ reporte.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="POST" action="{{ url_for('actualizar_reporte', reporte_id=reporte.id) }}">
+                            <div class="modal-header">
+                            <h5 class="modal-title">Actualizar Reporte</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" name="estado">
+                                <option value="pendiente" {% if reporte.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                                <option value="en proceso" {% if reporte.estado == 'en proceso' %}selected{% endif %}>En proceso</option>
+                                <option value="resuelto" {% if reporte.estado == 'resuelto' %}selected{% endif %}>Resuelto</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comentario" class="form-label">Comentario</label>
+                                <textarea class="form-control" name="comentario">{{ reporte.comentario }}</textarea>
+                            </div>
+                            {% if reporte.evidencia %}
+                                <div class="mb-3">
+                                    <label class="form-label">Evidencia:</label><br>
+                                    <img src="{{ url_for('static', filename='img/reportes/' + reporte.evidencia) }}" 
+                                        alt="Evidencia" class="img-fluid rounded border" style="max-height: 200px;">
+                                </div>
+                            {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Guardar cambios</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -13,6 +13,9 @@
         <h5 class="card-title">{{ a.titulo }}</h5>
         <p class="card-text">{{ a.descripcion }}</p>
         <p class="text-muted">Área: {{ a.area }}</p>
+        <p class="text-muted"><i class="far fa-clock me-1"></i>
+          {{ a.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M') }}
+        </p>
         <form method="POST">
           <input type="hidden" name="actividad_id" value="{{ a.id }}">
           {% if a.id in inscritas %}

@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestión de Actividades</h2>
+    <a href="{{ url_for('crear_actividad') }}" class="btn btn-success mb-3">+ Nueva Actividad</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">
+            {% if mostrar_archivadas %}
+            Actividades Archivadas
+            {% else %}
+            Actividades Activas
+            {% endif %}
+        </h2>
+
+        <a href="{{ url_for('admin_actividades', archivadas='0' if mostrar_archivadas else '1') }}" class="btn btn-outline-primary">
+            {% if mostrar_archivadas %}
+            Ver Activas
+            {% else %}
+            Ver Archivadas
+            {% endif %}
+        </a>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Área</th>
+            <th>Acciones</th>
+            <th>Fecha y hora</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for actividad in actividades %}
+        <tr>
+            <td>{{ actividad.titulo }}</td>
+            <td>{{ actividad.descripcion }}</td>
+            <td>{{ actividad.area }}</td>
+            <td>{{ actividad.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                <a href="{{ url_for('editar_actividad', id=actividad.id) }}" class="btn btn-sm btn-primary">
+                    Editar
+                </a>
+                <form method="POST" action="{{ url_for('archivar_actividad', id=actividad.id) }}" class="d-inline">
+                    {% if not actividad.archivada %}
+                    <button type="submit" class="btn btn-sm btn-warning">
+                        Archivar
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-sm btn-info">
+                        Desarchivar
+                    </button>
+                    {% endif %}
+
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

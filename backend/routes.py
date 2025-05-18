@@ -1,9 +1,11 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, current_app
 from datetime import datetime, timedelta
-from .models import db, Usuario, Reporte, Actividad, Inscripcion
+from .models import db, Usuario, Reporte, Actividad, Inscripcion, Notificacion
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import os
+from functools import wraps
+import os, json
+
 
 
 def init_routes(app):
@@ -45,6 +47,7 @@ def init_routes(app):
             if usuario and check_password_hash(usuario.contrasena, contrasena):
                 session['usuario_id'] = usuario.id
                 session['usuario_nombre'] = usuario.username
+                session['es_admin'] = usuario.es_admin
                 flash('Inicio de sesión exitoso.')
                 return redirect(url_for('menu'))
             else:
@@ -142,6 +145,9 @@ def init_routes(app):
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
 
+        # Archivar actividades pasadas antes de cargar la lista
+        archivar_actividades_pasadas()
+
         if request.method == 'POST':
             actividad_id = request.form.get('actividad_id')
             ya_inscrito = Inscripcion.query.filter_by(
@@ -162,7 +168,7 @@ def init_routes(app):
 
             return redirect(url_for('actividades'))
 
-        actividades = Actividad.query.all()
+        actividades = Actividad.query.filter_by(archivada=False).order_by(Actividad.fecha_hora_inicio.asc()).all()
         inscritas = [i.actividad_id for i in Inscripcion.query.filter_by(usuario_id=session['usuario_id']).all()]
         return render_template('actividades.html', actividades=actividades, inscritas=inscritas)
 
@@ -176,13 +182,159 @@ def init_routes(app):
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
 
-        # Ejemplo estático
-        notificaciones = [
-            {"mensaje": "Tu reporte #12 ha cambiado a estado 'En revisión'", "tipo": "info"},
-            {"mensaje": "Nueva actividad disponible: Reforestación", "tipo": "success"},
-            {"mensaje": "Tu actividad 'Reciclaje electrónico' inicia mañana", "tipo": "warning"}
-        ]
-
-        # notificaciones = Notificacion.query.filter_by(usuario_id=session['usuario_id']).all()
+        notificaciones = Notificacion.query.filter_by(usuario_id=session['usuario_id']).all()
 
         return render_template('notificaciones.html', notificaciones=notificaciones)
+    
+    
+# ------------------------------------------------------------------------------------------------------------ #
+#                                         ADMIN ROUTES                                                         #
+# ------------------------------------------------------------------------------------------------------------ #
+
+    def admin_required(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not session.get('usuario_id') or not session.get('es_admin'):
+                flash('Acceso restringido a administradores.')
+                return redirect(url_for('menu'))
+            return f(*args, **kwargs)
+        return decorated_function
+
+    @app.route('/admin')
+    @admin_required
+    def admin_dashboard():
+        return render_template('admin/dashboard.html')
+
+    @app.route('/admin/puntos', methods=['GET', 'POST'])
+    @admin_required
+    def admin_puntos():
+        ruta_json = os.path.join(current_app.root_path, '..', 'frontend', 'static', 'js', 'puntos.json')
+
+        if not os.path.exists(ruta_json):
+            flash(f'Archivo puntos.json no encontrado. Ruta: {ruta_json}', 'danger')
+            return redirect(url_for('admin_dashboard'))
+
+        if request.method == 'POST':
+            nombre = request.form['nombre']
+            descripcion = request.form['descripcion']
+            lat = float(request.form['lat'])
+            lng = float(request.form['lng'])
+
+            with open(ruta_json, 'r', encoding='utf-8') as f:
+                puntos = json.load(f)
+
+            puntos.append({
+                'nombre': nombre,
+                'descripcion': descripcion,
+                'lat': lat,
+                'lng': lng
+            })
+
+            with open(ruta_json, 'w', encoding='utf-8') as f:
+                json.dump(puntos, f, ensure_ascii=False, indent=2)
+
+            flash('Punto agregado correctamente.')
+            return redirect(url_for('admin_puntos'))
+
+        return render_template('admin/puntos.html')
+
+
+    @app.route('/admin/reportes')
+    @admin_required
+    def admin_reportes():
+        reportes = Reporte.query.order_by(Reporte.fecha.desc()).all()
+        return render_template('admin/reportes.html', reportes=reportes)
+    
+    @app.route('/admin/reportes/<int:reporte_id>/actualizar', methods=['POST'])
+    @admin_required
+    def actualizar_reporte(reporte_id):
+        nuevo_estado = request.form.get('estado')
+        comentario = request.form.get('comentario')
+
+        reporte = Reporte.query.get_or_404(reporte_id)
+        reporte.estado = nuevo_estado
+        if comentario:
+            reporte.comentario = comentario
+        db.session.commit()
+
+        flash('Reporte actualizado correctamente.')
+        return redirect(url_for('admin_reportes'))
+
+    @app.route('/admin/actividades')
+    @admin_required
+    def admin_actividades():
+        archivar_actividades_pasadas()  # Reutilizamos la función
+
+        mostrar_archivadas = request.args.get('archivadas') == '1'
+
+        actividades = Actividad.query.filter_by(
+            archivada=mostrar_archivadas
+        ).order_by(Actividad.fecha_hora_inicio.asc()).all()
+
+        return render_template('admin/actividades.html', actividades=actividades, mostrar_archivadas=mostrar_archivadas)
+    
+    @app.route('/admin/actividades/crear', methods=['GET', 'POST'])
+    @admin_required
+    def crear_actividad():
+        if request.method == 'POST':
+            titulo = request.form['titulo']
+            descripcion = request.form['descripcion']
+            area = request.form['area']
+            fecha_str = request.form['fecha_hora_inicio']
+            fecha = datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M')
+            if fecha < datetime.now():
+                flash('La fecha y hora deben ser futuras.', 'danger')
+                return render_template('admin/actividad_form.html', accion='Crear', now=datetime.now())
+
+            nueva = Actividad(titulo=titulo, descripcion=descripcion, area=area, fecha_hora_inicio=fecha)
+            db.session.add(nueva)
+            db.session.commit()
+            flash('Actividad creada correctamente.')
+            return redirect(url_for('admin_actividades'))
+
+        return render_template('admin/actividad_form.html', accion='Crear')
+
+    @app.route('/admin/actividades/<int:id>/editar', methods=['GET', 'POST'])
+    @admin_required
+    def editar_actividad(id):
+        actividad = Actividad.query.get_or_404(id)
+
+        if request.method == 'POST':
+            actividad.titulo = request.form['titulo']
+            actividad.descripcion = request.form['descripcion']
+            actividad.area = request.form['area']
+            fecha_str = request.form['fecha_hora_inicio']
+            fecha = datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M')
+            if fecha < datetime.now():
+                flash('La fecha y hora deben ser futuras.', 'danger')
+                return render_template('admin/actividad_form.html', accion='Editar', now=datetime.now(), actividad=actividad)
+            actividad.fecha_hora_inicio = fecha
+            
+            
+            db.session.commit()
+            flash('Actividad actualizada correctamente.')
+            return redirect(url_for('admin_actividades'))
+
+        return render_template('admin/actividad_form.html', accion='Editar', actividad=actividad)
+
+    @app.route('/admin/actividades/<int:id>/archivar', methods=['POST'])
+    @admin_required
+    def archivar_actividad(id):
+        actividad = Actividad.query.get_or_404(id)
+        actividad.archivada = not actividad.archivada
+        db.session.commit()
+        flash(f"Actividad {'archivada' if actividad.archivada else 'desarchivada'} correctamente.")
+        return redirect(url_for('admin_actividades'))
+
+    def archivar_actividades_pasadas():
+        ahora = datetime.now()
+        actividades_pasadas = Actividad.query.filter(
+            Actividad.fecha_hora_inicio < ahora,
+            Actividad.archivada == False
+        ).all()
+
+        for actividad in actividades_pasadas:
+            actividad.archivada = True
+
+        if actividades_pasadas:
+            db.session.commit()

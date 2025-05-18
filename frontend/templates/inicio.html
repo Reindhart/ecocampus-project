@@ -1,11 +1,13 @@
 {% extends 'layout.html' %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio | EcoCampus{% endblock %}
 
 {% block content %}
-  <div class="inicio">
-    <h2>Bienvenido a EcoCampus</h2>
-    <a href="{{ url_for('login') }}">Ingresar</a> | 
-    <a href="{{ url_for('signup') }}">Registrarse</a>
-  </div>
+<div class="text-center mt-5">
+  <i class="fas fa-leaf fa-5x text-success mb-4"></i>
+  <h1 class="mb-3">Bienvenido a EcoCampus</h1>
+  <p class="lead mb-4">Gestiona reportes, actividades y el entorno ecológico de tu campus.</p>
+  <a href="{{ url_for('login') }}" class="btn btn-success btn-lg me-2"><i class="fas fa-sign-in-alt"></i> Ingresar</a>
+  <a href="{{ url_for('signup') }}" class="btn btn-outline-success btn-lg"><i class="fas fa-user-plus"></i> Registrarse</a>
+</div>
 {% endblock %}

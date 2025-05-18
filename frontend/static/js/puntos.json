@@ -3,24 +3,35 @@
     "nombre": "Edificio A",
     "descripcion": "Facultad de Ingeniería",
     "lat": 20.6552,
-    "lng": -103.3251
+    "lng": -103.3251,
+    "tipo": "construccion"
   },
   {
     "nombre": "Laboratorios Centrales",
     "descripcion": "Zona de laboratorios de química y física",
     "lat": 20.654,
-    "lng": -103.3258
+    "lng": -103.3258,
+    "tipo": "construccion"
   },
   {
     "nombre": "Jardín Central",
     "descripcion": "Área verde central",
     "lat": 20.6547,
-    "lng": -103.3267
+    "lng": -103.3267,
+    "tipo": "verde"
   },
   {
     "nombre": "Ciudad Batalla",
     "descripcion": "juegos de cartitas",
     "lat": 20.657735,
-    "lng": -103.327022
+    "lng": -103.327022,
+    "tipo": "construccion"
+  },
+  {
+    "nombre": "Globo",
+    "descripcion": "ya no existe",
+    "lat": 20.656008,
+    "lng": -103.325122,
+    "tipo": "restaurante"
   }
 ]

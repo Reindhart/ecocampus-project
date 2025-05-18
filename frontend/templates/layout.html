@@ -55,35 +55,41 @@
         </div>
 
         
-        {% if session.get('usuario_id') and request.path in [url_for('perfil'), url_for('reportes'), url_for('mapa'), url_for('perfil_reportes'), url_for('perfil_actividades')] %}
+        {% if session.get('usuario_id') and request.path in [url_for('perfil'), url_for('reportes'), url_for('mapa'), url_for('perfil_reportes'), url_for('perfil_actividades'), url_for('actividades'), url_for('notificaciones')] %}
         <footer class="footer fixed-bottom bg-white border-top shadow-sm">
             <div class="container-fluid">
                 <div class="row text-center">
-                <div class="col">
-                    <a href="{{ url_for('perfil') }}" class="nav-icon {% if request.path in [url_for('perfil'), url_for('perfil_reportes'), url_for('perfil_actividades')] %}active{% endif %}">
-                    <i class="fas fa-user fa-lg"></i>
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="{{ url_for('reportes') }}" class="nav-icon {% if request.path == url_for('reportes') %}active{% endif %}">
-                    <i class="fas fa-clipboard-list fa-lg"></i>
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="{{ url_for('menu') }}" class="nav-icon">
-                    <i class="fas fa-home fa-lg"></i>
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="{{ url_for('mapa') }}" class="nav-icon {% if request.path == url_for('mapa') %}active{% endif %}">
-                    <i class="fas fa-map-marked-alt fa-lg"></i>
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="{{ url_for('notificaciones') }}" class="nav-icon {% if request.path == url_for('notificaciones') %}active{% endif %}">
-                    <i class="fas fa-bell fa-lg"></i>
-                    </a>
-                </div>
+                    <div class="col">
+                        <a href="{{ url_for('perfil') }}" class="nav-icon {% if request.path in [url_for('perfil'), url_for('perfil_reportes'), url_for('perfil_actividades')] %}active{% endif %}">
+                        <i class="fas fa-user fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ url_for('reportes') }}" class="nav-icon {% if request.path == url_for('reportes') %}active{% endif %}">
+                        <i class="fas fa-clipboard-list fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ url_for('actividades') }}" class="nav-icon {% if request.path == url_for('actividades') %}active{% endif %}">
+                        <i class="fas fa-leaf fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ url_for('menu') }}" class="nav-icon">
+                        <i class="fas fa-home fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ url_for('mapa') }}" class="nav-icon {% if request.path == url_for('mapa') %}active{% endif %}">
+                        <i class="fas fa-map-marked-alt fa-lg"></i>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ url_for('notificaciones') }}" class="nav-icon {% if request.path == url_for('notificaciones') %}active{% endif %}">
+                        <i class="fas fa-bell fa-lg"></i>
+                        </a>
+                    </div>
+                    
                 </div>
             </div>
         </footer>

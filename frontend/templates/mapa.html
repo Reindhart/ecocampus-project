@@ -16,30 +16,61 @@
 
 {% block scripts %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom-markers.css') }}">
 <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
 
 <script>
-  const mapa = L.map('map').setView([20.6546, -103.3259], 17); // CUCEI
+  const map = L.map('map').setView([20.6546, -103.3259], 17);
+  const iconosPorTipo = {
+    bote:     'marker-bote',
+    verde:    'marker-verde',
+    bebedero: 'marker-bebedero',
+    restaurante: 'marker-restaurante',
+    tienda:   'marker-tienda',
+    construccion: 'marker-construccion'
+  };
 
-  // Tile layer OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'EcoCampus'
-  }).addTo(mapa);
+  }).addTo(map);
 
-  // Puntos de interés
-  const puntos = [
-    { nombre: "Edificio A", coords: [20.6552, -103.3251] },
-    { nombre: "Laboratorios", coords: [20.6540, -103.3258] },
-    { nombre: "Jardín Central", coords: [20.6547, -103.3267] }
-  ];
+  fetch("{{ url_for('static', filename='js/puntos.json') }}")
+  .then(res => res.json())
+  .then(puntos => {
+    puntos.forEach(p => {
+      const clase = iconosPorTipo[p.tipo] || 'marker-default';
 
-  fetch('{{ url_for("static", filename="js/puntos.json") }}')
-    .then(res => res.json())
-    .then(puntos => {
-      puntos.forEach(p => {
-        L.marker([p.lat, p.lng]).addTo(mapa)
-          .bindPopup(`<strong>${p.nombre}</strong><br>${p.descripcion}`);
+      const icono = L.divIcon({
+        className: `custom-marker ${clase}`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, -10]
       });
+
+      L.marker([p.lat, p.lng], { icon: icono }).addTo(map)
+        .bindPopup(`<strong>${p.nombre}</strong><br>${p.descripcion}`);
     });
+  });
+
+  let marcadorTemp = null;
+
+  map.on('click', function (e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+    document.getElementById('lat').value = lat;
+    document.getElementById('lng').value = lng;
+    if (marcadorTemp) {
+      map.removeLayer(marcadorTemp);
+    }
+    marcadorTemp = L.marker([lat, lng], { draggable: true }).addTo(map)
+      .bindPopup('Ubicación seleccionada').openPopup();
+
+
+    marcadorTemp.on('dragend', function (event) {
+      const pos = event.target.getLatLng();
+      document.getElementById('lat').value = pos.lat.toFixed(6);
+      document.getElementById('lng').value = pos.lng.toFixed(6);
+    });
+  });
 </script>
 {% endblock %}

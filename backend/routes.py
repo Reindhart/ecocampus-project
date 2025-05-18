@@ -4,6 +4,7 @@ from .models import db, Usuario, Reporte, Actividad, Inscripcion, Notificacion
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
+from sqlalchemy import or_
 import os, json
 
 def init_routes(app):
@@ -187,7 +188,14 @@ def init_routes(app):
         if 'usuario_id' not in session:
             return redirect(url_for('login'))
 
-        notificaciones = Notificacion.query.filter_by(usuario_id=session['usuario_id']).all()
+        usuario_id = session['usuario_id']
+
+        notificaciones = Notificacion.query.filter(
+            or_(
+                Notificacion.usuario_id == usuario_id,
+                Notificacion.usuario_id == None  # también puedes usar `is_(None)`
+            )
+        ).order_by(Notificacion.fecha.desc()).all()  # Opcional: ordenadas por fecha
 
         return render_template('notificaciones.html', notificaciones=notificaciones)
     
@@ -231,6 +239,7 @@ def init_routes(app):
         if request.method == 'POST':
             nombre = request.form['nombre']
             descripcion = request.form['descripcion']
+            tipo = request.form['tipo']
             lat = float(request.form['lat'])
             lng = float(request.form['lng'])
 
@@ -241,7 +250,8 @@ def init_routes(app):
                 'nombre': nombre,
                 'descripcion': descripcion,
                 'lat': lat,
-                'lng': lng
+                'lng': lng,
+                'tipo': tipo
             })
 
             with open(ruta_json, 'w', encoding='utf-8') as f:
@@ -252,7 +262,6 @@ def init_routes(app):
             return redirect(url_for('admin_puntos'))
 
         return render_template('admin/puntos.html')
-
 
     @app.route('/admin/reportes')
     @admin_required
@@ -271,7 +280,10 @@ def init_routes(app):
         if comentario:
             reporte.comentario = comentario
         db.session.commit()
-        crear_notificacion(f"Tu reporte fue actualizado a estado: {nuevo_estado}.", 'success', usuario_id=reporte.usuario_id)
+        if nuevo_estado == 'resuelto':
+            crear_notificacion(f"Tu reporte fue actualizado a estado: {nuevo_estado}.", 'success', usuario_id=reporte.usuario_id)
+        if nuevo_estado == 'en proceso':
+            crear_notificacion(f"Tu reporte fue actualizado a estado: {nuevo_estado}.", 'warning', usuario_id=reporte.usuario_id)
         flash('Reporte actualizado correctamente.')
         return redirect(url_for('admin_reportes'))
 
@@ -308,7 +320,7 @@ def init_routes(app):
             flash('Actividad creada correctamente.')
             return redirect(url_for('admin_actividades'))
 
-        return render_template('admin/actividad_form.html', accion='Crear')
+        return render_template('admin/actividad_form.html', accion='Crear', now=datetime.now())
 
     @app.route('/admin/actividades/<int:id>/editar', methods=['GET', 'POST'])
     @admin_required

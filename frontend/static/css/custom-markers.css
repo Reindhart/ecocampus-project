@@ -1,0 +1,15 @@
+.custom-marker {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  box-shadow: 0 0 4px #555;
+}
+
+.marker-bote { background-color: green; }
+.marker-verde { background-color: darkgreen; }
+.marker-bebedero { background-color: blue; }
+.marker-restaurante { background-color: red; }
+.marker-tienda { background-color: orange; }
+.marker-construccion { background-color: gray; }
+.marker-default { background-color: purple; }

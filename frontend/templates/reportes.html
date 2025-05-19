@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<form method="POST" action="{{ url_for('reportes') }}">
+<form method="POST" action="{{ url_for('reportes') }}" enctype="multipart/form-data">
   <div class="mb-3">
     <label for="area" class="form-label">Área Afectada</label>
     <input type="text" name="area" id="area" class="form-control" required>

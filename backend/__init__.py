@@ -10,7 +10,7 @@ def create_app():
     # Configuración de SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['UPLOAD_FOLDER'] = os.path.join('frontend', 'static', 'img', 'reportes')
+    app.config['UPLOAD_FOLDER'] = os.path.join('..', 'frontend', 'static', 'img', 'reportes')
     app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 

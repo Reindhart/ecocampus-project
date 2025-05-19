@@ -47,9 +47,7 @@
           <td>{{ r.descripcion }}</td>
           <td class="text-center">
             {% if r.evidencia %}
-              <a href="{{ url_for('static', filename=r.evidencia) }}" target="_blank">
-                <i class="fas fa-image"></i> Ver
-              </a>
+              <img src="{{ url_for('static', filename=r.evidencia) }}" alt="Evidencia" class="img-thumbnail" style="max-width: 120px;">
             {% else %}
               <span class="text-muted">—</span>
             {% endif %}

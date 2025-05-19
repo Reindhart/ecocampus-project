@@ -118,9 +118,9 @@ def init_routes(app):
 
             evidencia = ''
             if archivo and archivo.filename != '' and archivo_permitido(archivo.filename):
-                nombre_archivo = secure_filename(archivo.filename)
-                evidencia = os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo)
-                ruta_absoluta = os.path.join(app.root_path, evidencia)
+                nombre_archivo = secure_filename(f"imagen_{datetime.now().strftime('%Y-%m-%d_%H%M%S%f')}.{archivo.filename.rsplit('.', 1)[-1]}")
+                ruta_relativa = f"img/reportes/{nombre_archivo}"
+                ruta_absoluta = os.path.abspath(os.path.join('frontend', 'static', ruta_relativa))
                 archivo.save(ruta_absoluta)
 
             nuevo = Reporte(
@@ -128,11 +128,12 @@ def init_routes(app):
                 tipo=tipo,
                 descripcion=descripcion,
                 comentario=comentario,
-                evidencia=evidencia.replace('frontend/', ''),  # Para usar con url_for
+                evidencia=ruta_relativa,
                 fecha=datetime.now().strftime('%Y-%m-%d'),
                 estado='pendiente',
                 usuario_id=session['usuario_id']
             )
+
             db.session.add(nuevo)
             db.session.commit()
             flash(f'Reporte con el folio #{nuevo.id} fue enviado con éxito.')

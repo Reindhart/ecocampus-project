@@ -343,7 +343,7 @@ def init_routes(app):
             flash('Actividad actualizada correctamente.')
             return redirect(url_for('admin_actividades'))
 
-        return render_template('admin/actividad_form.html', accion='Editar', actividad=actividad)
+        return render_template('admin/actividad_form.html', accion='Editar', actividad=actividad, now=datetime.now())
 
     @app.route('/admin/actividades/<int:id>/archivar', methods=['POST'])
     @admin_required

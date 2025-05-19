@@ -75,5 +75,12 @@
     "lat": 20.656541,
     "lng": -103.325963,
     "tipo": "bote"
+  },
+  {
+    "nombre": "Cafeteria",
+    "descripcion": "al aldo del Q",
+    "lat": 20.657859,
+    "lng": -103.325039,
+    "tipo": "restaurante"
   }
 ]
